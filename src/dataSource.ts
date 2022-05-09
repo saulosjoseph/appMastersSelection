@@ -1,13 +1,5 @@
 import { RESTDataSource } from "apollo-datasource-rest";
-import {
-  Appearance,
-  Biography,
-  Connections,
-  Images,
-  Powerstats,
-  Superhero,
-  Work,
-} from "./interface";
+import { Superhero } from "./interface";
 
 const API_URL = "https://cdn.jsdelivr.net/gh/akabab/superhero-api@0.3.0/api";
 
@@ -74,3 +66,5 @@ export class SuperHero extends RESTDataSource {
     return response.slice(0, limit);
   }
 }
+
+export const dataSources = () => ({ superHero: new SuperHero() });
