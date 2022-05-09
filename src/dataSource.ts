@@ -20,11 +20,11 @@ export class SuperHero extends RESTDataSource {
     obj: Partial<Superhero>,
     keyValue: string,
     father?: string
-  ): any {
-    if (obj.hasOwnProperty(keyValue)) {
+  ): string {
+    if (obj.hasOwnProperty(keyValue) && father) {
       return father;
     }
-    return Object.keys(obj)
+    const response = Object.keys(obj)
       .map((key) => {
         if (typeof obj[key as keyof Partial<Superhero>] == "object") {
           return this.deepHasOwnProperty(
@@ -35,6 +35,11 @@ export class SuperHero extends RESTDataSource {
         }
       })
       .filter((value) => typeof value === "string")[0];
+    if (response) {
+      return response;
+    } else {
+      return "NA";
+    }
   }
 
   async list(limit?: number, order?: string) {
@@ -64,6 +69,56 @@ export class SuperHero extends RESTDataSource {
       });
     }
     return response.slice(0, limit);
+  }
+
+  deepFind(superhero: Superhero, query: string, filter: string): boolean {
+    for (let prop in superhero[filter as keyof Superhero]) {
+      if (
+        typeof superhero[filter as keyof Superhero][prop] === "string" &&
+        (superhero[filter as keyof Superhero][prop] as string).toLowerCase() ===
+          query.toLowerCase()
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  find(superhero: Superhero, query: string, filter: string): boolean {
+    if (typeof superhero[filter as keyof Superhero] === "object") {
+      return this.deepFind(superhero, query, filter);
+    } else if (typeof superhero[filter as keyof Superhero] === "string") {
+      return (
+        (superhero[filter as keyof Superhero] as string).toLowerCase() ===
+        query.toLowerCase()
+      );
+    }
+    return false;
+  }
+
+  async search(query: string, filter?: string) {
+    const response: Array<Superhero> = [];
+    if (this.heroes.length === 0) {
+      await this.getHeroes();
+    }
+    if (filter) {
+      response.push.apply(
+        response,
+        this.heroes.filter((superhero) => this.find(superhero, query, filter))
+      );
+    } else {
+      response.push.apply(
+        response,
+        this.heroes.filter((superhero) => {
+          for (let prop in superhero) {
+            if (this.find(superhero, query, prop)) {
+              return true;
+            }
+          }
+        })
+      );
+    }
+    return response;
   }
 }
 

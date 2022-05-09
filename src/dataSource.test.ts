@@ -57,3 +57,27 @@ describe("list", () => {
     expect(response.length).toBe(1);
   });
 });
+
+describe("search", () => {
+  it("search('Abe Sapien') should return heroe with id 2", async () => {
+    const response = await superhero.search("Abe Sapien");
+
+    expect(response[0].id).toBe(2);
+    expect(response[0].name).toBe("Abe Sapien");
+    expect(response.length).toBe(1);
+  });
+
+  it("search('Ungara', 'biography') should return heroe with id 2", async () => {
+    const response = await superhero.search("Ungara", "biography");
+
+    expect(response[0].id).toBe(3);
+    expect(response[0].biography.placeOfBirth).toBe("Ungara");
+    expect(response.length).toBe(1);
+  });
+
+  it("search('Blue') should return a list with 4 heroes", async () => {
+    const response = await superhero.search("Blue");
+
+    expect(response.length).toBe(4);
+  });
+});
