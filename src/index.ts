@@ -5,6 +5,6 @@ import { typeDefs } from "./schema";
 
 const server = new ApolloServer({ typeDefs, resolvers, dataSources });
 
-server.listen(4000).then(({ url }) => {
+server.listen({ port: process.env.PORT || 4000 }).then(({ url }) => {
   console.log(`graphQL running at ${url}`);
 });
