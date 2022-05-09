@@ -1,2 +1,6 @@
 # appMastersSelection
-AppMasters Backend Node Middle selection
+[AppMasters](www.appmasters.io) Backend Node Middle selection
+
+- Node
+- TypeScript
+- GraphQL com Apollo Server
